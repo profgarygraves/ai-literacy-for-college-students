@@ -1,0 +1,1981 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Literacy for College Students</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5b6670;
+      --paper: #fbfcf8;
+      --panel: #ffffff;
+      --line: #d9dfdc;
+      /* School theme: change these three colors to match another college. */
+      --school-blue: #174f8a;
+      --school-gold: #d7a928;
+      --school-accent: #26735d;
+      --blue: var(--school-blue);
+      --green: var(--school-accent);
+      --gold: var(--school-gold);
+      --red: #b4453c;
+      --violet: #67528f;
+      --teal: #168684;
+      --coral: #d4624b;
+      --lime: #7a9b28;
+      --sky: #2f79c6;
+      --shadow: 0 14px 34px rgba(23, 32, 38, 0.12);
+      --radius: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    button, input, textarea {
+      font: inherit;
+    }
+
+    .mission-start {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(23, 32, 38, 0.78);
+    }
+
+    .mission-start.hidden {
+      display: none;
+    }
+
+    .start-card {
+      width: min(720px, 100%);
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(23, 79, 138, 0.96), rgba(23, 32, 38, 0.96)),
+        var(--blue);
+      color: #fff;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    .start-card h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1;
+    }
+
+    .start-card p {
+      margin: 12px 0 0;
+      max-width: 620px;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+    }
+
+    .start-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .start-fields label,
+    .completion-field label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .start-fields input,
+    .completion-field input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .start-card .primary {
+      margin-top: 16px;
+      background: var(--gold);
+      color: #172026;
+    }
+
+    .game {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 18px clamp(16px, 4vw, 42px);
+      border-bottom: 1px solid var(--line);
+      background: #f5f7f2;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2.25rem);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.4;
+      max-width: 780px;
+    }
+
+    .status-box {
+      display: grid;
+      gap: 6px;
+      min-width: 190px;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dde4e1;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--gold));
+      transition: width 220ms ease;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(210px, 270px) 1fr;
+      min-height: 0;
+    }
+
+    .mission-nav {
+      padding: 18px;
+      border-right: 1px solid var(--line);
+      background: #eef3ef;
+    }
+
+    .mission-nav h2,
+    .moves-panel h2 {
+      margin: 0 0 12px;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: var(--muted);
+    }
+
+    .mission-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mission-tab {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .mission-tab:hover,
+    .mission-tab.active {
+      border-color: #cad6d2;
+      background: #ffffff;
+    }
+
+    .mission-tab.active {
+      box-shadow: inset 4px 0 0 var(--tab-color, var(--blue));
+    }
+
+    .mission-tab .mission-number {
+      background: color-mix(in srgb, var(--tab-color, var(--green)) 20%, #ffffff);
+      color: var(--tab-color, var(--green));
+    }
+
+    .mission-tab:disabled {
+      cursor: not-allowed;
+      opacity: 0.54;
+    }
+
+    .mission-tab.completed .mission-number {
+      background: var(--tab-color, var(--green));
+      color: #fff;
+    }
+
+    .mission-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #d9e6e1;
+      color: var(--green);
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .mission-tab strong,
+    .mission-tab span {
+      display: block;
+    }
+
+    .mission-tab strong {
+      font-size: 0.94rem;
+      line-height: 1.2;
+    }
+
+    .mission-tab span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+      gap: 18px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .mission-card,
+    .moves-panel,
+    .completion-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .mission-card {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      min-height: 660px;
+      overflow: hidden;
+    }
+
+    .mission-visual {
+      position: relative;
+      min-height: 145px;
+      padding: 20px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(23, 32, 38, 0.2), rgba(23, 32, 38, 0.58)),
+        linear-gradient(135deg, var(--blue), var(--green));
+    }
+
+    .mission-visual.ai-college { background: linear-gradient(135deg, var(--blue), #2f718f); }
+    .mission-visual.integrity { background: linear-gradient(135deg, #3b5f95, var(--blue)); }
+    .mission-visual.prompting { background: linear-gradient(135deg, var(--gold), var(--blue)); }
+    .mission-visual.writing { background: linear-gradient(135deg, var(--blue), #7b6a2a); }
+    .mission-visual.careers { background: linear-gradient(135deg, var(--blue), var(--gold)); }
+    .mission-visual.money { background: linear-gradient(135deg, #2f718f, var(--blue)); }
+    .mission-visual.future { background: linear-gradient(135deg, #314a7a, var(--gold)); }
+    .mission-visual.tools { background: linear-gradient(135deg, var(--gold), var(--sky), var(--blue)); }
+
+    .visual-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(#fff 1px, transparent 1px),
+        linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .mission-kicker {
+      position: relative;
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      opacity: 0.9;
+    }
+
+    .mission-title {
+      position: relative;
+      margin: 9px 0 0;
+      max-width: 640px;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .mission-body {
+      padding: 20px;
+    }
+
+    .scenario {
+      margin: 0;
+      max-width: 760px;
+      color: #2b353c;
+      font-size: 1.04rem;
+      line-height: 1.58;
+    }
+
+    .question {
+      margin: 18px 0 0;
+      font-size: 1.25rem;
+      line-height: 1.3;
+    }
+
+    .mini-lessons {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #f7faf8;
+    }
+
+    .mini-lessons.resource-room {
+      background: linear-gradient(135deg, #f7fbff, #fff8e4);
+      border-color: #c7d7e8;
+    }
+
+    .mini-lessons.hidden,
+    .question.hidden,
+    .choices.hidden,
+    .quiz-lock.hidden,
+    .try-it.hidden {
+      display: none;
+    }
+
+    .mini-lessons h3,
+    .try-it h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .lesson-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .lesson-list li {
+      min-height: 92px;
+      padding: 10px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #fff;
+      color: #2b353c;
+      line-height: 1.35;
+      font-size: 0.9rem;
+    }
+
+    .lesson-list li:nth-child(1) { border-top: 5px solid var(--blue); }
+    .lesson-list li:nth-child(2) { border-top: 5px solid var(--gold); }
+    .lesson-list li:nth-child(3) { border-top: 5px solid var(--teal); }
+    .lesson-list li:nth-child(4) { border-top: 5px solid var(--coral); }
+    .lesson-list li:nth-child(5) { border-top: 5px solid var(--violet); }
+
+    .lesson-list li.locked {
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      background: #eef3ef;
+      border-style: dashed;
+    }
+
+    .lesson-list li.acknowledged {
+      border-color: #bdd8ca;
+      background: #eaf5ef;
+    }
+
+    .lesson-list strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--blue);
+    }
+
+    .lesson-list .secondary {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .try-it {
+      margin-top: 12px;
+      padding: 14px;
+      border-left: 4px solid var(--gold);
+      background: #fff8ed;
+      color: #3f3325;
+    }
+
+    .try-it p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .try-it-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .prompt-pack {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #ffffff;
+    }
+
+    .prompt-pack.visible {
+      display: block;
+    }
+
+    .prompt-pack h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .prompt-template-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .prompt-template {
+      padding: 12px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #f9fbf8;
+    }
+
+    .prompt-template strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--blue);
+    }
+
+    .prompt-template code {
+      display: block;
+      white-space: pre-wrap;
+      color: #2b353c;
+      line-height: 1.45;
+      font-family: "Courier New", monospace;
+      font-size: 0.82rem;
+    }
+
+    .tool-guide {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #ffffff;
+    }
+
+    .tool-guide.visible {
+      display: block;
+    }
+
+    .tool-guide h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .tool-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tool-card {
+      display: grid;
+      gap: 7px;
+      padding: 12px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #ffffff, #f9fbf8);
+      min-height: 172px;
+      border-top: 6px solid var(--tool-color, var(--blue));
+    }
+
+    .tool-card strong {
+      color: var(--tool-color, var(--blue));
+      font-size: 1rem;
+    }
+
+    .tool-card span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .tool-card p {
+      margin: 0;
+      color: #2b353c;
+      line-height: 1.42;
+      font-size: 0.9rem;
+    }
+
+    .tool-card a {
+      color: var(--tool-color, var(--blue));
+      font-weight: 800;
+      text-decoration: underline;
+    }
+
+    .tool-card.chat { --tool-color: var(--blue); }
+    .tool-card.tutor { --tool-color: var(--teal); }
+    .tool-card.research { --tool-color: var(--violet); }
+    .tool-card.class-materials { --tool-color: var(--green); }
+    .tool-card.slides { --tool-color: var(--gold); }
+    .tool-card.writing { --tool-color: var(--coral); }
+    .tool-card.career { --tool-color: var(--sky); }
+    .tool-card.creative { --tool-color: var(--lime); }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0 20px 20px;
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      align-items: start;
+      width: 100%;
+      min-height: 86px;
+      padding: 14px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #f9fbf8;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .choice:hover {
+      border-color: var(--blue);
+      background: #eef6f8;
+    }
+
+    .choice.selected.correct {
+      border-color: var(--green);
+      background: #e8f4ef;
+    }
+
+    .choice.selected.incorrect {
+      border-color: var(--red);
+      background: #f9ecea;
+    }
+
+    .choice-letter {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e1e8e6;
+      font-weight: 800;
+      color: #2b353c;
+    }
+
+    .choice span:last-child {
+      line-height: 1.35;
+    }
+
+    .choice:disabled {
+      cursor: default;
+    }
+
+    .quiz-lock {
+      margin: 0 20px 20px;
+      padding: 12px;
+      border: 1px dashed #d3dcda;
+      border-radius: var(--radius);
+      background: #f7faf8;
+      color: var(--muted);
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .quiz-lock.hidden {
+      display: none;
+    }
+
+    .feedback {
+      margin: 0 20px 20px;
+      padding: 16px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #f7faf8;
+    }
+
+    .feedback.hidden,
+    .completion-card.hidden {
+      display: none;
+    }
+
+    .feedback h3,
+    .completion-card h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.25;
+    }
+
+    .feedback p {
+      margin: 8px 0 0;
+      color: #2b353c;
+      line-height: 1.5;
+    }
+
+    .power-move {
+      margin-top: 12px;
+      padding: 12px;
+      border-left: 4px solid var(--gold);
+      background: #fff8ed;
+      color: #3f3325;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 20px 20px;
+      flex-wrap: wrap;
+    }
+
+    .primary,
+    .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--green);
+    }
+
+    .primary:disabled {
+      background: #9eaaa6;
+      cursor: not-allowed;
+    }
+
+    .secondary {
+      color: var(--ink);
+      border-color: var(--line);
+      background: #fff;
+    }
+
+    .moves-panel {
+      align-self: start;
+      padding: 16px;
+    }
+
+    .control-meter {
+      margin-bottom: 16px;
+      padding: 12px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #f7faf8;
+    }
+
+    .control-meter strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 0.92rem;
+    }
+
+    .meter-track {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #dde4e1;
+    }
+
+    .meter-fill {
+      width: 14%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--green));
+      transition: width 220ms ease;
+    }
+
+    .move-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .move-card {
+      padding: 12px;
+      border: 1px dashed #c1cbc7;
+      border-radius: var(--radius);
+      background: #fbfcf8;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .move-card.earned {
+      border-style: solid;
+      border-color: #bdd8ca;
+      background: #eaf5ef;
+      color: var(--ink);
+    }
+
+    .move-card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: inherit;
+    }
+
+    .reflection {
+      margin-top: 16px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .reflection label {
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .reflection textarea {
+      min-height: 110px;
+      width: 100%;
+      resize: vertical;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .completion-card {
+      grid-column: 1 / -1;
+      padding: 18px;
+    }
+
+    .completion-card p {
+      max-width: 850px;
+      color: #2b353c;
+      line-height: 1.55;
+    }
+
+    .badge-preview {
+      display: grid;
+      grid-template-columns: 94px 1fr;
+      gap: 16px;
+      align-items: center;
+      max-width: 620px;
+      margin: 16px 0;
+      padding: 16px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #f7faf8, #fff8df);
+    }
+
+    .badge-seal {
+      display: grid;
+      place-items: center;
+      width: 94px;
+      height: 94px;
+      border-radius: 50%;
+      border: 6px solid var(--gold);
+      background: var(--blue);
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .badge-preview strong {
+      display: block;
+      font-size: 1.2rem;
+      line-height: 1.2;
+    }
+
+    .badge-preview span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .completion-code {
+      display: inline-block;
+      margin: 6px 0 14px;
+      padding: 10px 12px;
+      border: 1px solid #d3dcda;
+      border-radius: var(--radius);
+      background: #f7faf8;
+      font-family: "Courier New", monospace;
+      font-weight: 800;
+    }
+
+    .completion-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .completion-field {
+      max-width: 520px;
+      margin: 12px 0;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 980px) {
+      .topbar,
+      .layout,
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-nav {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .mission-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .content {
+        padding: 14px;
+      }
+
+      .mission-card {
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 14px;
+      }
+
+      .mission-list,
+      .choices,
+      .lesson-list,
+      .prompt-template-list,
+      .tool-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .choice {
+        min-height: 0;
+      }
+
+      .badge-preview {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-title {
+        font-size: 1.75rem;
+      }
+
+      .start-fields {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section id="mission-start" class="mission-start" aria-labelledby="start-title">
+    <div class="start-card">
+      <h2 id="start-title">Accept Your AI Literacy Mission</h2>
+      <p>Welcome in. This challenge is built to help every student get practical AI confidence, even if you are brand new. Add your name for your badge, add your teacher email if you want the completion email ready later, then launch.</p>
+      <div class="start-fields">
+        <label for="student-name-input">
+          Your name for the badge
+          <input id="student-name-input" type="text" autocomplete="name" placeholder="First name or full name">
+        </label>
+        <label for="teacher-email-start">
+          Teacher email optional
+          <input id="teacher-email-start" type="email" autocomplete="email" placeholder="professor@example.edu">
+        </label>
+      </div>
+      <button id="accept-mission-button" class="primary" type="button">Accept Mission</button>
+    </div>
+  </section>
+
+  <div class="game">
+    <header class="topbar">
+      <div class="brand">
+        <h1>AI Literacy for College Students</h1>
+        <p>Your quick AI glow-up: seven core missions, one bonus AI tool guide, friendly coaching, and practical AI moves you can use in any class.</p>
+      </div>
+      <div class="status-box" aria-live="polite">
+        <div class="status-line">
+          <span id="progress-label">Mission 1 of 7</span>
+          <span id="score-label">0 earned</span>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav class="mission-nav" aria-label="Mission navigation">
+        <h2>Mission Map</h2>
+        <div id="mission-list" class="mission-list"></div>
+      </nav>
+
+      <main class="content">
+        <section class="mission-card" aria-labelledby="mission-title">
+          <div id="mission-visual" class="mission-visual ai-college">
+            <div class="visual-grid" aria-hidden="true"></div>
+            <p id="mission-kicker" class="mission-kicker">Mission 1</p>
+            <h2 id="mission-title" class="mission-title">AI in College</h2>
+          </div>
+
+          <div class="mission-body">
+            <p id="scenario" class="scenario"></p>
+            <section id="mini-lessons" class="mini-lessons" aria-labelledby="lesson-heading">
+              <h3 id="lesson-heading">Five quick lessons</h3>
+              <ul id="lesson-list" class="lesson-list"></ul>
+              <div class="try-it">
+                <h3>Try It Challenge</h3>
+                <p id="try-it-copy"></p>
+                <div class="try-it-actions">
+                  <button id="copy-challenge-button" class="primary" type="button">Copy Challenge</button>
+                  <a id="open-ai-button" class="secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Open ChatGPT</a>
+                </div>
+              </div>
+              <section id="prompt-pack" class="prompt-pack" aria-labelledby="prompt-pack-heading">
+                <h3 id="prompt-pack-heading">Prompt starter cards</h3>
+                <ul id="prompt-template-list" class="prompt-template-list"></ul>
+              </section>
+              <section id="tool-guide" class="tool-guide" aria-labelledby="tool-guide-heading">
+                <h3 id="tool-guide-heading">Student AI systems guide</h3>
+                <ul id="tool-card-grid" class="tool-card-grid"></ul>
+              </section>
+            </section>
+            <h3 id="question" class="question"></h3>
+          </div>
+
+          <div id="choices" class="choices"></div>
+          <div id="quiz-lock" class="quiz-lock">Acknowledge all five mini lessons to unlock the mission question.</div>
+
+          <section id="feedback" class="feedback hidden" aria-live="polite">
+            <h3 id="feedback-title"></h3>
+            <p id="feedback-copy"></p>
+            <div id="power-move" class="power-move"></div>
+          </section>
+
+          <div class="card-actions">
+            <button id="prev-button" class="secondary" type="button">Previous</button>
+            <button id="next-button" class="primary" type="button" disabled>Next Mission</button>
+          </div>
+        </section>
+
+        <aside class="moves-panel" aria-label="Earned AI moves">
+          <div class="control-meter">
+            <strong>Control Meter</strong>
+            <div class="meter-track" aria-hidden="true">
+              <div id="meter-fill" class="meter-fill"></div>
+            </div>
+          </div>
+          <h2>Your AI Moves</h2>
+          <ul id="move-list" class="move-list"></ul>
+          <div class="reflection">
+            <label for="reflection">Final reflection</label>
+            <textarea id="reflection" placeholder="After mission 7, write one way you will use AI to support your learning without replacing your thinking."></textarea>
+          </div>
+        </aside>
+
+        <section id="completion-card" class="completion-card hidden" aria-live="polite">
+          <h2>Badge Unlocked</h2>
+          <p>You made it through the full challenge. That means you have the basics: use AI to support your thinking, protect your privacy, check important claims, choose the right tool, and keep your own voice in the work.</p>
+          <div class="badge-preview" aria-label="Digital badge preview">
+            <div class="badge-seal">AI<br>OK</div>
+            <div>
+              <strong>AI Literacy Starter Badge</strong>
+              <span>Awarded to <b id="badge-student-name">AI Learner</b> for completing AI Literacy for College Students.</span>
+            </div>
+          </div>
+          <p>Submit this badge code in Canvas along with your reflection.</p>
+          <div class="completion-code">AI-READY-2026</div>
+          <p>Suggested reflection prompt: Which AI move will help you most this semester, and how will you use it responsibly?</p>
+          <div class="completion-field">
+            <label for="teacher-email-complete">
+              Teacher email for completion note
+              <input id="teacher-email-complete" type="email" placeholder="professor@example.edu">
+            </label>
+          </div>
+          <div class="completion-actions">
+            <button id="copy-code-button" class="primary" type="button">Copy Badge Code</button>
+            <button id="print-badge-button" class="secondary" type="button">Print Badge</button>
+            <button id="download-badge-button" class="primary" type="button">Download Trophy Badge</button>
+            <button id="email-teacher-button" class="secondary" type="button">Email My Teacher</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const missions = [
+      {
+        title: 'AI in College',
+        theme: 'ai-college',
+        focus: 'Use AI as a learning tool',
+        scenario: 'AI is already part of college life. Used well, it can help you understand tough concepts, study smarter, and save time. Used poorly, it can weaken your learning and create academic problems.',
+        lessons: [
+          ['Use it to learn', 'Ask AI to explain, quiz, compare, or give examples. That keeps your brain in the driver seat.'],
+          ['Do not outsource yourself', 'If AI does the whole assignment, you may finish faster but learn less.'],
+          ['Ask follow-ups', 'The first answer is a starting point. Push back, ask for simpler wording, or request another example.'],
+          ['Connect it to class', 'Better prompts mention your course topic, assignment directions, or what you already know.'],
+          ['Own the final work', 'You are responsible for what you submit, even if AI helped along the way.']
+        ],
+        tryChallenge: 'Ask an AI tool: "Act as a friendly tutor. Help me understand one confusing idea from my class using a simple example, then ask me one check-for-understanding question."',
+        question: 'Which is the best use of AI for a student?',
+        choices: [
+          'Writing your entire essay for you',
+          'Explaining a concept you do not understand',
+          'Submitting AI work as your own',
+          'Skipping assignments using AI'
+        ],
+        correct: 1,
+        feedback: [
+          'If AI writes the whole essay, you miss the learning and may violate course rules. A stronger move is asking AI to help create an outline you can build from.',
+          'Exactly. AI is strongest when it helps you understand ideas, break things down, and learn faster while you stay in charge.',
+          'Submitting AI work as your own is risky. Use AI to brainstorm, clarify ideas, or improve your own writing instead.',
+          'Skipping the assignment will not help you build skill. A better first step is asking AI to explain what the assignment is asking.'
+        ],
+        moveTitle: 'Tutor Mode',
+        move: 'Ask AI to explain one concept from class in simple terms, then ask one follow-up question.'
+      },
+      {
+        title: 'Academic Integrity',
+        theme: 'integrity',
+        focus: 'Keep your work honest',
+        scenario: 'Different instructors have different AI policies, but one rule travels well: if you would not feel comfortable explaining how you used AI, pause and rethink the approach.',
+        lessons: [
+          ['Policies vary', 'One instructor may allow AI brainstorming while another may limit it. Check the syllabus or ask.'],
+          ['Process matters', 'Using AI to plan, study, or get feedback is different from submitting AI-made work as your own.'],
+          ['Keep your voice', 'Your examples, judgment, and wording should still sound like you.'],
+          ['Be ready to explain', 'A good test is whether you can honestly describe how AI helped you.'],
+          ['When unsure, ask', 'A quick question to your professor can save stress later.']
+        ],
+        tryChallenge: 'Find one AI policy statement in a syllabus or course page. If you cannot find one, write one respectful question you could ask your instructor.',
+        question: 'You have a short essay due tonight and feel stuck. What is the best way to use AI?',
+        choices: [
+          'Ask AI to write the full essay and submit it',
+          'Ask AI for ideas, then write your own response',
+          'Copy an AI response and change a few words',
+          'Skip the assignment'
+        ],
+        correct: 1,
+        feedback: [
+          'That may feel efficient, but it removes your thinking from the work. Use AI for ideas, structure, or feedback while you write the response.',
+          'Right. AI can help you get unstuck while your thinking, voice, and choices remain at the center.',
+          'Changing a few words does not make the work yours. A better move is asking AI for feedback on a paragraph you wrote.',
+          'When you feel stuck, AI can help you understand the task and start. Skipping gives you nothing to build on.'
+        ],
+        moveTitle: 'Idea Starter',
+        move: 'Ask for three ideas on your topic, choose one, and write the response in your own words.'
+      },
+      {
+        title: 'Prompt Power',
+        theme: 'prompting',
+        focus: 'Ask better questions',
+        scenario: 'AI is only as useful as the request you give it. A strong prompt is not about having a giant list of magic words. It is about design: give AI a job, useful context, a clear standard for success, and an output you can actually use.',
+        lessons: [
+          ['Give it a job', 'Tell AI what role to play: tutor, writing coach, career guide, study partner, or reviewer.'],
+          ['Give context', 'Add the topic, class level, assignment directions, what you tried, and where you are stuck.'],
+          ['Define good', 'Say what success looks like: simple, accurate, beginner-friendly, evidence-based, or in your voice.'],
+          ['Make it usable', 'Ask for a format you can use right away: steps, table, quiz, checklist, outline, or example.'],
+          ['Create a loop', 'Ask AI to test you, correct mistakes, and adjust the next explanation to your level.']
+        ],
+        tryChallenge: 'Use this pattern: "You are my [role]. I want to [goal]. Here is my context: [context]. Please give me [usable output]. A good answer should [what good looks like]."',
+        promptTemplates: [
+          {
+            title: 'Learning Prompt',
+            body: 'You are my patient, expert tutor.\n\nI want to understand [topic] well enough to use it in real life.\n\nPlease explain it in plain English, show me the most important 20%, give one real-world example, ask me 3 short questions, and correct me if I misunderstand.'
+          },
+          {
+            title: 'Builder Prompt',
+            body: 'You are a practical project coach.\n\nContext: [what I have, who it is for, time/tools/limits]\nGoal: [what I want to build]\n\nTurn this into the simplest useful version. Give me the workflow, tools needed, failure points, success metric, and a 7-day plan.'
+          }
+        ],
+        question: 'Which prompt has the strongest design?',
+        choices: [
+          'Help me with this',
+          'You are my patient tutor. I want to understand Chapter 3 well enough to use it on the quiz. Explain the most important ideas in plain English, give one example, and ask me 3 short questions.',
+          'Explain Chapter 3 but make it good',
+          'Do my homework and make it sound like me'
+        ],
+        correct: 1,
+        feedback: [
+          'Too vague. AI does not know the job, context, standard for success, or output format.',
+          'Yes. This gives AI a job, context, a success target, and a usable output.',
+          'This has a topic, but it still leaves too much guessing. Define what good means and what format you want.',
+          'That asks AI to replace your work and hide it. A stronger prompt helps you learn how to do the work.'
+        ],
+        moveTitle: 'Job + Context + Good + Output',
+        move: 'Use this pattern: You are my [role]. I want to [goal]. Here is my context: [context]. A good answer should [standard]. Please give me [format].'
+      },
+      {
+        title: 'Writing and Studying',
+        theme: 'writing',
+        focus: 'Use AI as a coach',
+        scenario: 'AI can organize ideas, improve writing, and quiz you while studying. The goal is to improve your work without losing your voice or skipping the learning.',
+        lessons: [
+          ['Draft first', 'Even a messy paragraph gives AI something real to coach.'],
+          ['Ask for feedback', 'Feedback on clarity, organization, evidence, and tone helps you improve without replacing your work.'],
+          ['Study actively', 'Ask AI to quiz you, explain mistakes, and create practice examples.'],
+          ['Protect your voice', 'Do not accept revisions that no longer sound like you or say things you do not mean.'],
+          ['Check accuracy', 'AI can invent details. Confirm facts, quotes, formulas, and citations.']
+        ],
+        tryChallenge: 'Paste a paragraph you wrote and ask: "Act as a writing coach. My goal is clearer writing. Give me three revision suggestions, but keep my voice and do not rewrite it for me."',
+        question: 'Which is the best way to use AI for writing?',
+        choices: [
+          'Ask AI to write your full essay',
+          'Ask AI to improve your paragraph and give feedback',
+          'Copy an AI response and submit it',
+          'Avoid writing by using AI'
+        ],
+        correct: 1,
+        feedback: [
+          'That removes your thinking from the process. Write a rough draft first, then ask for feedback.',
+          'Exactly. AI works well as a writing coach, editor, and study partner when your work stays central.',
+          'That is not original work. Use AI to brainstorm, refine, or edit what you created.',
+          'Avoiding the work blocks growth. Use AI to help you start with an outline or study question.'
+        ],
+        moveTitle: 'Feedback Loop',
+        move: 'Paste your own paragraph and ask for suggestions to improve clarity, flow, and evidence.'
+      },
+      {
+        title: 'Careers',
+        theme: 'careers',
+        focus: 'Build real-world advantage',
+        scenario: 'AI is becoming a career skill. It can help with resumes, interviews, career exploration, and workplace problem solving when it is used honestly.',
+        lessons: [
+          ['Translate experience', 'AI can help connect class projects, jobs, caregiving, volunteering, and skills to career language.'],
+          ['Stay truthful', 'A resume should make your real strengths clearer, not invent skills.'],
+          ['Practice interviews', 'AI can ask mock interview questions and help you improve answers.'],
+          ['Research paths', 'Use AI to compare careers, needed skills, salary questions, and next steps.'],
+          ['Review everything', 'Never send AI-generated career materials without checking accuracy and tone.']
+        ],
+        tryChallenge: 'Ask: "Act as a career coach. My goal is to explore options related to [major or interest]. Give me three career paths, useful skills, and one next step for each."',
+        question: 'Which is the best way to use AI for your future career?',
+        choices: [
+          'Let AI create a fake resume with skills you do not have',
+          'Use AI to improve your resume and highlight your real strengths',
+          'Use AI to apply to jobs without reviewing anything',
+          'Avoid learning AI because it is too new'
+        ],
+        correct: 1,
+        feedback: [
+          'Fake skills can backfire and damage credibility. Use AI to present what is true about you more clearly.',
+          'Right. AI can help you communicate your actual strengths and prepare for opportunities.',
+          'Automation without review is risky. Draft with AI, then review and revise before sending.',
+          'Avoiding AI can put you behind. Start small and learn practical uses that match your goals.'
+        ],
+        moveTitle: 'Career Translator',
+        move: 'Ask AI to connect your major, work experience, or interests to three possible career paths.'
+      },
+      {
+        title: 'Money and Privacy',
+        theme: 'money',
+        focus: 'Plan without oversharing',
+        scenario: 'AI can help with budgeting and planning, but it is a guide, not a financial advisor. It also should not receive private financial data.',
+        lessons: [
+          ['Use estimates', 'Rounded numbers are enough for practice budgets. Do not share private account details.'],
+          ['Ask for options', 'AI can suggest tradeoffs, categories, and questions to consider.'],
+          ['Verify money advice', 'Financial, legal, tax, and loan information should be checked with reliable sources.'],
+          ['Plan small', 'A small weekly change can be more useful than a dramatic plan you will not follow.'],
+          ['Privacy first', 'Never enter passwords, SSNs, bank logins, or sensitive personal information.']
+        ],
+        tryChallenge: 'Ask: "Act as a budgeting coach. My goal is to make a simple monthly budget using rounded estimates. Give me categories, questions I should answer, and one small savings idea."',
+        question: 'Which is the best way to use AI for money?',
+        choices: [
+          'Ask AI how to get rich fast',
+          'Use AI to create a simple monthly budget',
+          'Trust AI financial advice without question',
+          'Avoid thinking about money'
+        ],
+        correct: 1,
+        feedback: [
+          'Get-rich-fast advice is usually a warning sign. Use AI for planning, tradeoffs, and questions to research.',
+          'Correct. AI can help you see patterns, plan ahead, and reduce stress without needing private details.',
+          'AI can be wrong. Verify important financial information and talk to qualified people when decisions matter.',
+          'Avoiding money does not reduce stress for long. Start with one small planning question.'
+        ],
+        moveTitle: 'Privacy Check',
+        move: 'Use sample numbers or rounded estimates. Never enter passwords, bank details, SSNs, or private financial data.'
+      },
+      {
+        title: 'Responsible AI',
+        theme: 'future',
+        focus: 'Think critically',
+        scenario: 'AI can help you learn faster, think deeper, and work smarter. The long-term skill is knowing when to use it, when to question it, and when to rely on your own judgment.',
+        lessons: [
+          ['Stay in control', 'AI can suggest, explain, and coach. You still choose, judge, and submit.'],
+          ['Question confidence', 'AI may sound certain even when it is wrong. Confidence is not proof.'],
+          ['Compare sources', 'For important claims, check class materials, trusted sites, or instructor guidance.'],
+          ['Use it regularly', 'AI literacy grows through small experiments, not one perfect prompt.'],
+          ['Bring your values', 'Responsible AI use includes honesty, privacy, fairness, and respect for learning.']
+        ],
+        tryChallenge: 'Ask: "Act as a study coach. Based on what I am studying, suggest three responsible ways I can use AI this semester and one thing I should avoid."',
+        question: 'Which mindset will help you most with AI long-term?',
+        choices: [
+          'Let AI do everything for me',
+          'Use AI to support my thinking and decisions',
+          'Trust everything AI says',
+          'Avoid AI completely'
+        ],
+        correct: 1,
+        feedback: [
+          'Relying on AI for everything weakens your skills. AI should support your thinking, not replace it.',
+          'Exactly. That mindset keeps you in control while helping you learn and work more effectively.',
+          'AI can be helpful and still be wrong. Smart users verify, compare, and question.',
+          'Avoiding AI completely can limit your options. Start with small, responsible experiments.'
+        ],
+        moveTitle: 'Verify Before Trusting',
+        move: 'Ask AI for an answer, then verify important claims with your class materials, instructor guidance, or credible sources.'
+      },
+      {
+        title: 'Bonus: AI Tool Guide',
+        theme: 'tools',
+        focus: 'Free AI resource room',
+        isBonus: true,
+        scenario: 'This bonus room is here for AI equity: a colorful guide to free or free-start AI systems students can try for different needs. No test here. Explore the cards, pick what fits your class life, and remember that free plans and student deals can change, so use the official access links to double-check.',
+        lessons: [],
+        tryChallenge: 'Pick one student need you have this week, then open one matching tool card below. Try the learning prompt from Mission 3 and notice whether the tool helps you understand, create, research, or organize better.',
+        aiTools: [
+          {
+            id: 'chatgpt',
+            tone: 'chat',
+            category: 'Study and brainstorming',
+            title: 'ChatGPT',
+            access: 'Free plan available; paid plans increase limits and features.',
+            bestFor: 'Quick explanations, brainstorming paper ideas, turning confusing directions into steps, coding help, images, voice, and general study support.',
+            url: 'https://chatgpt.com/',
+            official: 'https://help.openai.com/en/articles/9275245-using-chatgpt-s-free-tier-faq'
+          },
+          {
+            id: 'claude',
+            tone: 'writing',
+            category: 'Reading and writing coach',
+            title: 'Claude',
+            access: 'Free plan available for everyone; paid plans increase usage and features.',
+            bestFor: 'Careful reading, paragraph feedback, summaries, study guides, discussion-board prep, and long-document help.',
+            url: 'https://claude.ai/',
+            official: 'https://www.claude.com/pricing'
+          },
+          {
+            id: 'gemini',
+            tone: 'tutor',
+            category: 'Google study helper',
+            title: 'Google Gemini',
+            access: 'Free access is available; student AI Pro trials or discounts may be available depending on eligibility and timing.',
+            bestFor: 'Students already using Google tools, mobile studying, live conversation practice, image work, and quick explanations.',
+            url: 'https://gemini.google.com/',
+            official: 'https://support.google.com/gemini/answer/16417758?hl=en'
+          },
+          {
+            id: 'copilot',
+            tone: 'slides',
+            category: 'Microsoft assignments',
+            title: 'Microsoft Copilot',
+            access: 'Free consumer Copilot is available; Microsoft has student offers for Microsoft 365 with expanded Copilot features.',
+            bestFor: 'Students using Word, PowerPoint, Excel, Outlook, Edge, or Bing for papers, slides, tables, and school email.',
+            url: 'https://copilot.microsoft.com/',
+            official: 'https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/ai-for-students'
+          },
+          {
+            id: 'notebooklm',
+            tone: 'class-materials',
+            category: 'Course materials tutor',
+            title: 'NotebookLM',
+            access: 'Standard access is free with a Gmail account; many school Google accounts also have access.',
+            bestFor: 'Uploading readings, lecture notes, slides, and sources, then asking questions grounded in those materials.',
+            url: 'https://notebooklm.google.com/',
+            official: 'https://support.google.com/notebooklm/answer/16213268'
+          },
+          {
+            id: 'perplexity',
+            tone: 'research',
+            category: 'Research with sources',
+            title: 'Perplexity',
+            access: 'Standard plan is free; Education Pro is discounted for verified students and faculty.',
+            bestFor: 'Current information, cited answers, source comparison, topic exploration, and finding leads for research.',
+            url: 'https://www.perplexity.ai/',
+            official: 'https://www.perplexity.ai/help-center/en/articles/11187416-which-perplexity-subscription-plan-is-right-for-you'
+          },
+          {
+            id: 'elicit',
+            tone: 'research',
+            category: 'Research papers',
+            title: 'Elicit',
+            access: 'Basic plan is free with limits.',
+            bestFor: 'Finding research papers, summarizing studies, and starting literature review work.',
+            url: 'https://elicit.com/',
+            official: 'https://elicit.com/pricing'
+          },
+          {
+            id: 'adobeexpress',
+            tone: 'creative',
+            category: 'Slides and visuals',
+            title: 'Adobe Express',
+            access: 'Free plan available for students; paid plans add more assets and generative AI credits.',
+            bestFor: 'Presentation visuals, flyers, social posts, short videos, graphics, and creative class projects.',
+            url: 'https://www.adobe.com/express/',
+            official: 'https://www.adobe.com/express/pricing'
+          },
+          {
+            id: 'canva',
+            tone: 'slides',
+            category: 'Slides and class design',
+            title: 'Canva',
+            access: 'Free plan available; education access depends on school eligibility and account type.',
+            bestFor: 'Slide decks, posters, infographics, resumes, group-project visuals, and quick polished designs.',
+            url: 'https://www.canva.com/',
+            official: 'https://www.canva.com/pricing/'
+          },
+          {
+            id: 'khanmigo',
+            tone: 'tutor',
+            category: 'Tutoring and practice',
+            title: 'Khanmigo',
+            access: 'Free teacher tools are available; learner access depends on Khan Academy offerings and eligibility.',
+            bestFor: 'Practice questions, guided tutoring, math and science support, and learning without just giving away answers.',
+            url: 'https://www.khanacademy.org/khan-labs',
+            official: 'https://www.khanacademy.org/khan-labs'
+          }
+        ],
+        moveTitle: 'Tool Match',
+        move: 'Before choosing an AI system, ask: What do I need help with, what data am I sharing, do I need sources, and is there a free option?'
+      }
+    ];
+
+    const referralLinks = {
+      chatgpt: '',
+      claude: '',
+      gemini: '',
+      copilot: '',
+      notebooklm: '',
+      perplexity: '',
+      elicit: '',
+      adobeexpress: '',
+      canva: '',
+      khanmigo: ''
+    };
+
+    const state = {
+      current: 0,
+      studentName: 'AI Learner',
+      teacherEmail: '',
+      answers: Array(missions.length).fill(null),
+      earned: Array(missions.length).fill(false),
+      lessonProgress: Array(missions.length).fill(0),
+      shuffledChoices: missions.map(function(mission) {
+        return shuffleIndices((mission.choices || []).length);
+      })
+    };
+
+    const elements = {
+      missionStart: document.getElementById('mission-start'),
+      studentNameInput: document.getElementById('student-name-input'),
+      teacherEmailStart: document.getElementById('teacher-email-start'),
+      acceptMissionButton: document.getElementById('accept-mission-button'),
+      missionList: document.getElementById('mission-list'),
+      missionVisual: document.getElementById('mission-visual'),
+      missionKicker: document.getElementById('mission-kicker'),
+      missionTitle: document.getElementById('mission-title'),
+      scenario: document.getElementById('scenario'),
+      miniLessons: document.getElementById('mini-lessons'),
+      lessonList: document.getElementById('lesson-list'),
+      tryItCopy: document.getElementById('try-it-copy'),
+      copyChallengeButton: document.getElementById('copy-challenge-button'),
+      promptPack: document.getElementById('prompt-pack'),
+      promptTemplateList: document.getElementById('prompt-template-list'),
+      toolGuide: document.getElementById('tool-guide'),
+      toolCardGrid: document.getElementById('tool-card-grid'),
+      question: document.getElementById('question'),
+      choices: document.getElementById('choices'),
+      quizLock: document.getElementById('quiz-lock'),
+      feedback: document.getElementById('feedback'),
+      feedbackTitle: document.getElementById('feedback-title'),
+      feedbackCopy: document.getElementById('feedback-copy'),
+      powerMove: document.getElementById('power-move'),
+      prevButton: document.getElementById('prev-button'),
+      nextButton: document.getElementById('next-button'),
+      progressLabel: document.getElementById('progress-label'),
+      scoreLabel: document.getElementById('score-label'),
+      progressFill: document.getElementById('progress-fill'),
+      meterFill: document.getElementById('meter-fill'),
+      moveList: document.getElementById('move-list'),
+      completionCard: document.getElementById('completion-card'),
+      badgeStudentName: document.getElementById('badge-student-name'),
+      teacherEmailComplete: document.getElementById('teacher-email-complete')
+    };
+
+    elements.acceptMissionButton.addEventListener('click', function() {
+      acceptMission();
+    });
+
+    elements.studentNameInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        acceptMission();
+      }
+    });
+
+    elements.copyChallengeButton.addEventListener('click', function() {
+      copyCurrentChallenge();
+    });
+
+    document.getElementById('copy-code-button').addEventListener('click', function() {
+      copyBadgeCode();
+    });
+
+    document.getElementById('print-badge-button').addEventListener('click', function() {
+      window.print();
+    });
+
+    document.getElementById('download-badge-button').addEventListener('click', function() {
+      downloadTrophyBadge();
+    });
+
+    document.getElementById('email-teacher-button').addEventListener('click', function() {
+      emailTeacher();
+    });
+
+    elements.prevButton.addEventListener('click', function() {
+      if (state.current > 0) {
+        state.current -= 1;
+        render();
+      }
+    });
+
+    elements.nextButton.addEventListener('click', function() {
+      if (state.current < missions.length - 1) {
+        state.current += 1;
+        render();
+      } else {
+        showCompletion();
+      }
+    });
+
+    function render() {
+      renderNavigation();
+      renderMission();
+      renderMoves();
+      renderProgress();
+    }
+
+    function renderNavigation() {
+      elements.missionList.innerHTML = '';
+      missions.forEach(function(mission, index) {
+        const firstOpenMission = getFirstOpenMission();
+        const isLocked = index > firstOpenMission;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.disabled = isLocked;
+        button.style.setProperty('--tab-color', getThemeColor(mission.theme));
+        button.className = 'mission-tab' +
+          (index === state.current ? ' active' : '') +
+          (state.earned[index] ? ' completed' : '') +
+          (isLocked ? ' locked' : '');
+        button.setAttribute('aria-current', index === state.current ? 'step' : 'false');
+        button.innerHTML =
+          '<span class="mission-number">' + (state.earned[index] ? 'OK' : index + 1) + '</span>' +
+          '<span><strong>' + escapeHtml(mission.title) + '</strong><span>' + escapeHtml(mission.focus) + '</span></span>';
+        button.addEventListener('click', function() {
+          if (isLocked) {
+            return;
+          }
+          state.current = index;
+          render();
+        });
+        elements.missionList.appendChild(button);
+      });
+    }
+
+    function renderMission() {
+      const mission = missions[state.current];
+      const answer = state.answers[state.current];
+      const isBonus = !!mission.isBonus;
+      elements.missionVisual.className = 'mission-visual ' + mission.theme;
+      elements.missionKicker.textContent = isBonus ? 'Bonus Resource Room' : 'Mission ' + (state.current + 1);
+      elements.missionTitle.textContent = mission.title;
+      elements.scenario.textContent = mission.scenario;
+      elements.miniLessons.classList.toggle('resource-room', isBonus);
+      renderLessons(mission);
+      elements.question.textContent = mission.question || '';
+      elements.choices.innerHTML = '';
+      elements.question.classList.toggle('hidden', isBonus);
+      elements.choices.classList.toggle('hidden', isBonus);
+      elements.quizLock.classList.toggle('hidden', isBonus || areLessonsComplete(state.current));
+
+      if (!isBonus) {
+      state.shuffledChoices[state.current].forEach(function(choiceIndex, displayIndex) {
+        const choice = mission.choices[choiceIndex];
+        const button = document.createElement('button');
+        const isSelected = answer === choiceIndex;
+        const isCorrect = choiceIndex === mission.correct;
+        button.type = 'button';
+        button.disabled = state.earned[state.current] || !areLessonsComplete(state.current);
+        button.className = 'choice' + (isSelected ? ' selected ' + (isCorrect ? 'correct' : 'incorrect') : '');
+        button.innerHTML =
+          '<span class="choice-letter">' + String.fromCharCode(65 + displayIndex) + '</span>' +
+          '<span>' + escapeHtml(choice) + '</span>';
+        button.addEventListener('click', function() {
+          chooseAnswer(choiceIndex);
+        });
+        elements.choices.appendChild(button);
+      });
+      }
+
+      elements.prevButton.disabled = state.current === 0;
+      elements.nextButton.disabled = isBonus ? false : !state.earned[state.current];
+      elements.nextButton.textContent = state.current === missions.length - 1 ? 'Finish Challenge' : 'Next Mission';
+
+      if (isBonus || answer === null) {
+        elements.feedback.classList.add('hidden');
+      } else {
+        showFeedback(mission, answer);
+      }
+    }
+
+    function renderLessons(mission) {
+      elements.lessonList.innerHTML = '';
+      elements.lessonList.classList.toggle('hidden', !!mission.isBonus);
+      document.getElementById('lesson-heading').textContent = mission.isBonus ? 'Free AI resource guide' : 'Five quick lessons';
+      const unlockedIndex = state.lessonProgress[state.current];
+      (mission.lessons || []).forEach(function(lesson, index) {
+        const item = document.createElement('li');
+        if (index > unlockedIndex) {
+          item.className = 'locked';
+          item.textContent = 'Locked until you check the lesson before it.';
+        } else {
+          const acknowledged = index < unlockedIndex;
+          item.className = acknowledged ? 'acknowledged' : '';
+          item.innerHTML = '<strong>' + escapeHtml(lesson[0]) + '</strong>' + escapeHtml(lesson[1]);
+          if (!acknowledged) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'secondary';
+            button.textContent = index === mission.lessons.length - 1 ? 'Got it. Unlock question' : 'Got it. Reveal next';
+            button.addEventListener('click', function() {
+              acknowledgeLesson();
+            });
+            item.appendChild(button);
+          }
+        }
+        elements.lessonList.appendChild(item);
+      });
+      elements.tryItCopy.textContent = mission.tryChallenge;
+      document.querySelector('.try-it').classList.toggle('hidden', !mission.tryChallenge);
+      elements.copyChallengeButton.textContent = 'Copy Challenge';
+      renderPromptTemplates(mission.promptTemplates || []);
+      renderAiTools(mission.aiTools || []);
+    }
+
+    function acknowledgeLesson() {
+      const mission = missions[state.current];
+      state.lessonProgress[state.current] = Math.min(
+        state.lessonProgress[state.current] + 1,
+        mission.lessons.length
+      );
+      render();
+    }
+
+    function areLessonsComplete(index) {
+      return state.lessonProgress[index] >= missions[index].lessons.length;
+    }
+
+    function renderPromptTemplates(templates) {
+      elements.promptTemplateList.innerHTML = '';
+      elements.promptPack.classList.toggle('visible', templates.length > 0);
+      templates.forEach(function(template) {
+        const item = document.createElement('li');
+        item.className = 'prompt-template';
+        item.innerHTML = '<strong>' + escapeHtml(template.title) + '</strong><code>' + escapeHtml(template.body) + '</code>';
+        elements.promptTemplateList.appendChild(item);
+      });
+    }
+
+    function renderAiTools(tools) {
+      elements.toolCardGrid.innerHTML = '';
+      elements.toolGuide.classList.toggle('visible', tools.length > 0);
+      tools.forEach(function(tool) {
+        const item = document.createElement('li');
+        const linkUrl = referralLinks[tool.id] || tool.url;
+        item.className = 'tool-card ' + sanitizeClass(tool.tone || tool.id || 'chat');
+        item.innerHTML =
+          '<span>' + escapeHtml(tool.category) + '</span>' +
+          '<strong>' + escapeHtml(tool.title) + '</strong>' +
+          '<p><b>Access:</b> ' + escapeHtml(tool.access) + '</p>' +
+          '<p><b>Best for:</b> ' + escapeHtml(tool.bestFor) + '</p>' +
+          '<p><a href="' + escapeAttribute(linkUrl) + '" target="_blank" rel="noopener noreferrer">Open tool</a> | ' +
+          '<a href="' + escapeAttribute(tool.official) + '" target="_blank" rel="noopener noreferrer">Official access info</a></p>';
+        elements.toolCardGrid.appendChild(item);
+      });
+    }
+
+    function chooseAnswer(choiceIndex) {
+      if (state.earned[state.current]) {
+        return;
+      }
+      if (!areLessonsComplete(state.current)) {
+        return;
+      }
+      state.answers[state.current] = choiceIndex;
+      if (choiceIndex === missions[state.current].correct) {
+        state.earned[state.current] = true;
+      }
+      render();
+    }
+
+    function showFeedback(mission, answer) {
+      const correct = answer === mission.correct;
+      elements.feedback.classList.remove('hidden');
+      elements.feedbackTitle.textContent = correct ? 'Strong choice' : 'Good moment to rethink';
+      elements.feedbackCopy.textContent = mission.feedback[answer] +
+        (correct ? ' Next mission unlocked.' : ' Try another choice to unlock the next mission.');
+      elements.powerMove.innerHTML = '<strong>Power Move:</strong> ' + escapeHtml(mission.move);
+    }
+
+    function renderMoves() {
+      elements.moveList.innerHTML = '';
+      missions.forEach(function(mission, index) {
+        const item = document.createElement('li');
+        const available = mission.isBonus || state.earned[index];
+        item.className = 'move-card' + (available ? ' earned' : '');
+        item.innerHTML = '<strong>' + escapeHtml(mission.moveTitle) + '</strong>' +
+          (available ? escapeHtml(mission.move) : 'Complete mission ' + (index + 1) + ' to unlock this move.');
+        elements.moveList.appendChild(item);
+      });
+    }
+
+    function renderProgress() {
+      const coreTotal = missions.filter(function(mission) {
+        return !mission.isBonus;
+      }).length;
+      const earnedCount = state.earned.filter(function(earned, index) {
+        return earned && !missions[index].isBonus;
+      }).length;
+      const percent = Math.round((earnedCount / coreTotal) * 100);
+      const controlPercent = Math.max(14, Math.round((earnedCount / coreTotal) * 100));
+      elements.progressLabel.textContent = 'Mission ' + (state.current + 1) + ' of ' + missions.length;
+      elements.scoreLabel.textContent = earnedCount + ' earned';
+      elements.progressFill.style.width = percent + '%';
+      elements.meterFill.style.width = controlPercent + '%';
+    }
+
+    function getFirstOpenMission() {
+      const firstUnfinished = state.earned.indexOf(false);
+      return firstUnfinished === -1 ? missions.length - 1 : firstUnfinished;
+    }
+
+    function getThemeColor(theme) {
+      const colors = {
+        'ai-college': 'var(--blue)',
+        integrity: 'var(--violet)',
+        prompting: 'var(--gold)',
+        writing: 'var(--coral)',
+        careers: 'var(--sky)',
+        money: 'var(--teal)',
+        future: 'var(--green)',
+        tools: 'var(--gold)'
+      };
+      return colors[theme] || 'var(--blue)';
+    }
+
+    function sanitizeClass(value) {
+      return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function showCompletion() {
+      elements.badgeStudentName.textContent = state.studentName;
+      elements.teacherEmailComplete.value = state.teacherEmail;
+      elements.completionCard.classList.remove('hidden');
+      elements.completionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function acceptMission() {
+      const name = String(elements.studentNameInput.value || '').trim();
+      const teacherEmail = String(elements.teacherEmailStart.value || '').trim();
+      state.studentName = name || 'AI Learner';
+      state.teacherEmail = teacherEmail;
+      elements.badgeStudentName.textContent = state.studentName;
+      elements.teacherEmailComplete.value = state.teacherEmail;
+      elements.missionStart.classList.add('hidden');
+    }
+
+    function copyCurrentChallenge() {
+      const mission = missions[state.current];
+      copyText(mission.tryChallenge, function() {
+        elements.copyChallengeButton.textContent = 'Challenge Copied';
+      });
+    }
+
+    function copyBadgeCode() {
+      const code = 'AI-READY-2026';
+      copyText(code, function() {
+        document.getElementById('copy-code-button').textContent = 'Badge Code Copied';
+      });
+    }
+
+    function copyText(text, onSuccess) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          onSuccess();
+        }).catch(function() {
+          fallbackCopy(text);
+          onSuccess();
+        });
+        return;
+      }
+      fallbackCopy(text);
+      onSuccess();
+    }
+
+    function fallbackCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+
+    function downloadTrophyBadge() {
+      const canvas = document.createElement('canvas');
+      const width = 1400;
+      const height = 1000;
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      const blue = getCssColor('--school-blue') || '#174f8a';
+      const gold = getCssColor('--school-gold') || '#d7a928';
+      const dark = '#101820';
+
+      const bg = ctx.createLinearGradient(0, 0, width, height);
+      bg.addColorStop(0, dark);
+      bg.addColorStop(0.48, blue);
+      bg.addColorStop(1, '#0b1720');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 2;
+      for (let x = 0; x < width; x += 70) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x - 260, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += 70) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y + 220);
+        ctx.stroke();
+      }
+
+      const seal = ctx.createRadialGradient(700, 410, 80, 700, 410, 300);
+      seal.addColorStop(0, '#fff7c8');
+      seal.addColorStop(0.35, gold);
+      seal.addColorStop(1, '#9c6b10');
+      ctx.fillStyle = seal;
+      ctx.beginPath();
+      ctx.arc(700, 410, 255, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 18;
+      ctx.strokeStyle = '#fff5bd';
+      ctx.stroke();
+
+      ctx.fillStyle = blue;
+      ctx.beginPath();
+      ctx.arc(700, 410, 190, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = gold;
+      ctx.font = '900 155px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('#1', 700, 405);
+      ctx.font = '900 74px Arial';
+      ctx.fillText('AI', 700, 500);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 58px Arial';
+      ctx.fillText('AI LITERACY TROPHY BADGE', 700, 115);
+      ctx.font = '700 34px Arial';
+      ctx.fillText('Awarded to', 700, 705);
+      ctx.fillStyle = '#fff1a7';
+      ctx.font = fitCanvasFont(ctx, state.studentName, 920, 66, 34, 'Arial', '900');
+      ctx.fillText(state.studentName, 700, 780);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 32px Arial';
+      ctx.fillText('Completed AI Literacy for College Students', 700, 840);
+      ctx.fillStyle = 'rgba(255,255,255,0.76)';
+      ctx.font = '600 25px Arial';
+      ctx.fillText('Badge Code: AI-READY-2026', 700, 895);
+      ctx.fillText(new Date().toLocaleDateString(), 700, 930);
+
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'ai-literacy-trophy-badge.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function emailTeacher() {
+      const teacherEmail = String(elements.teacherEmailComplete.value || state.teacherEmail || '').trim();
+      state.teacherEmail = teacherEmail;
+      if (!teacherEmail) {
+        elements.teacherEmailComplete.focus();
+        alert('Add your teacher email first, then click Email My Teacher again.');
+        return;
+      }
+
+      const reflection = String(document.getElementById('reflection').value || '').trim();
+      const subject = 'AI Literacy Challenge Completed';
+      const body = [
+        'Hello,',
+        '',
+        'I completed the AI Literacy for College Students challenge.',
+        '',
+        'Student: ' + state.studentName,
+        'Badge: AI Literacy Starter Badge',
+        'Badge code: AI-READY-2026',
+        'Completed: ' + new Date().toLocaleString(),
+        '',
+        'Reflection:',
+        reflection || '[Student can add reflection here before sending.]',
+        '',
+        'Thank you.'
+      ].join('\n');
+      window.location.href = 'mailto:' + encodeURIComponent(teacherEmail) +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body=' + encodeURIComponent(body);
+    }
+
+    function getCssColor(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function fitCanvasFont(ctx, text, maxWidth, startSize, minSize, family, weight) {
+      let size = startSize;
+      while (size > minSize) {
+        const font = weight + ' ' + size + 'px ' + family;
+        ctx.font = font;
+        if (ctx.measureText(text).width <= maxWidth) {
+          return font;
+        }
+        size -= 2;
+      }
+      return weight + ' ' + minSize + 'px ' + family;
+    }
+
+    function shuffleIndices(length) {
+      const indices = [];
+      for (let index = 0; index < length; index += 1) {
+        indices.push(index);
+      }
+      for (let index = indices.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        const temp = indices[index];
+        indices[index] = indices[swapIndex];
+        indices[swapIndex] = temp;
+      }
+      return indices;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value).replace(/`/g, '&#96;');
+    }
+
+    render();
+  </script>
+</body>
+</html>
